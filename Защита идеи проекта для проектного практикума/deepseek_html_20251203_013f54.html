@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лента мероприятий</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.5;
+            padding: 0;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Контейнер для контента */
+        .content-container {
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        /* Шапка приложения */
+        .app-header {
+            background-color: #fff;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .app-name {
+            font-weight: 700;
+            font-size: 22px;
+            color: #1877f2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .app-name i {
+            font-size: 20px;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .header-icons i {
+            color: #555;
+            font-size: 20px;
+        }
+        
+        /* Контейнер для карточек */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-top: 15px;
+        }
+        
+        /* Карточка мероприятия */
+        .event-card {
+            width: 100%;
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: none;
+            margin-bottom: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+        
+        .card-image-container {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 18px;
+        }
+        
+        .event-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        
+        .event-description {
+            font-size: 15px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 18px;
+            padding: 16px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .detail-item i {
+            color: #1877f2;
+            font-size: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .detail-text {
+            flex: 1;
+        }
+        
+        .detail-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+            font-size: 14.5px;
+        }
+        
+        .detail-subtitle {
+            color: #666;
+            font-size: 13.5px;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+        
+        .card-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14.5px;
+            font-weight: 500;
+        }
+        
+        .views {
+            color: #666;
+        }
+        
+        .likes {
+            color: #d32f2f;
+        }
+        
+        .stat i {
+            font-size: 16px;
+        }
+        
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Кнопка раскрытия комментариев */
+        .toggle-comments-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border: none;
+            color: #666;
+            font-size: 14.5px;
+            cursor: pointer;
+            border-top: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        
+        .toggle-comments-btn:hover {
+            background-color: #f0f2f5;
+        }
+        
+        .toggle-comments-btn i {
+            transition: transform 0.3s;
+        }
+        
+        .toggle-comments-btn.active i {
+            transform: rotate(180deg);
+        }
+        
+        /* Секция комментариев */
+        .comments-section {
+            padding: 0;
+            background-color: #fff;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            border-top: 1px solid #eee;
+        }
+        
+        .comments-section.expanded {
+            max-height: 800px;
+            padding: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: #1877f2;
+        }
+        
+        /* Комментарии пользователей */
+        .comments-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .comment {
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-right: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .comment-user-info {
+            flex: 1;
+        }
+        
+        .comment-user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #222;
+        }
+        
+        .comment-time {
+            color: #888;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        
+        .comment-text {
+            font-size: 13.5px;
+            color: #444;
+            line-height: 1.4;
+        }
+        
+        /* Кнопка регистрации */
+        .register-button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 16px;
+        }
+        
+        .register-button:hover {
+            background-color: #166fe5;
+        }
+        
+        .register-button.registered {
+            background-color: #2e7d32;
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 480px) {
+            .content-container {
+                padding: 12px;
+            }
+            
+            .app-header {
+                padding: 16px 15px;
+            }
+            
+            .card-image-container {
+                height: 200px;
+            }
+            
+            .event-title {
+                font-size: 19px;
+            }
+            
+            .event-description {
+                font-size: 14.5px;
+            }
+            
+            .cards-container {
+                gap: 18px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .card-image-container {
+                height: 180px;
+            }
+            
+            .event-title {
+                font-size: 18px;
+            }
+            
+            .card-content {
+                padding: 16px;
+            }
+            
+            .event-details {
+                padding: 14px;
+            }
+        }
+        
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .event-card {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* Прокрутка страницы */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Индикатор загрузки */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка приложения -->
+    <header class="app-header">
+        <div class="app-name">
+            <i class="fas fa-calendar-alt"></i>
+            <span>EventsFeed</span>
+        </div>
+        <div class="header-icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-plus"></i>
+        </div>
+    </header>
+    
+    <!-- Контейнер с карточками -->
+    <main class="content-container">
+        <div class="cards-container">
+            
+            <!-- Карточка 1: Джазовый вечер -->
+            <article class="event-card" data-card-id="1">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Джазовый концерт">
+                </div>
+                
+                <div class="card-content">
+                    <h2 class="event-title">Джазовый вечер в SUBTLE</h2>
+                    
+                    <p class="event-description">Погрузитесь в атмосферу живого джаза с выступлением лучших музыкантов города. В программе классические джазовые композиции и современные аранжировки.</p>
+                    
+                    <div class="event-details">
+                        <div class="detail-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">15 октября, 19:00</div>
+                                <div class="detail-subtitle">Продолжительность: 3 часа</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">Клуб SUBTLE</div>
+                                <div class="detail-subtitle">ул. Музыкальная, 15</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-stats">
+                            <div class="stat views">
+                                <i class="far fa-eye"></i>
+                                <span>1,247</span>
+                            </div>
+                            <div class="stat likes">
+                                <i class="far fa-heart"></i>
+                                <span>421</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn share-btn" title="Поделиться">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn save-btn" title="Сохранить">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="toggle-comments-btn" data-target="comments-1">
+                    <span>Показать комментарии</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <section class="comments-section" id="comments-1">
+                    <h3 class="section-title">
+                        <i class="far fa-comments"></i>
+                        <span>Комментарии</span>
+                    </h3>
+                    
+                    <div class="comments-container">
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Александр Петров</div>
+                                    <div class="comment-time">2 часа назад</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Только что узнал об этом событии! Выглядит потрясающе, обязательно схожу 👍</p>
+                        </div>
+                        
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Мария Иванова</div>
+                                    <div class="comment-time">5 часов назад</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Кто уже был на прошлом концерте этой группы? Расскажите, как впечатления?</p>
+                        </div>
+                    </div>
+                    
+                    <button class="register-button" data-event-id="1">
+                        Записаться на мероприятие
+                    </button>
+                </section>
+            </article>
+            
+            <!-- Карточка 2: Мастер-класс по живописи -->
+            <article class="event-card" data-card-id="2">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Мастер-класс по живописи">
+                </div>
+                
+                <div class="card-content">
+                    <h2 class="event-title">Мастер-класс: Акварельный пейзаж</h2>
+                    
+                    <p class="event-description">Научитесь создавать выразительные пейзажи акварелью под руководством профессионального художника. Все материалы предоставляются.</p>
+                    
+                    <div class="event-details">
+                        <div class="detail-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">20 октября, 14:00</div>
+                                <div class="detail-subtitle">Продолжительность: 4 часа</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">Галерея "Арт-пространство"</div>
+                                <div class="detail-subtitle">пр. Художников, 42</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-stats">
+                            <div class="stat views">
+                                <i class="far fa-eye"></i>
+                                <span>845</span>
+                            </div>
+                            <div class="stat likes">
+                                <i class="far fa-heart"></i>
+                                <span>210</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn share-btn" title="Поделиться">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn save-btn" title="Сохранить">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="toggle-comments-btn" data-target="comments-2">
+                    <span>Показать комментарии</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <section class="comments-section" id="comments-2">
+                    <h3 class="section-title">
+                        <i class="far fa-comments"></i>
+                        <span>Комментарии</span>
+                    </h3>
+                    
+                    <div class="comments-container">
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Сергей Кузнецов</div>
+                                    <div class="comment-time">Вчера</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Иду на этот мастер-класс с подругой! Очень ждём, всегда хотели научиться рисовать акварелью.</p>
+                        </div>
+                        
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Ирина Смирнова</div>
+                                    <div class="comment-time">3 дня назад</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Была на предыдущем мастер-классе этого художника - очень профессионально и душевно!</p>
+                        </div>
+                    </div>
+                    
+                    <button class="register-button" data-event-id="2">
+                        Записаться на мероприятие
+                    </button>
+                </section>
+            </article>
+            
+            <!-- Карточка 3: Кинофестиваль под открытым небом -->
+            <article class="event-card" data-card-id="3">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Кинофестиваль под открытым небом">
+                </div>
+                
+                <div class="card-content">
+                    <h2 class="event-title">Кинофестиваль под открытым небом</h2>
+                    
+                    <p class="event-description">Ежегодный фестиваль авторского кино на крыше исторического здания. В программе короткометражные фильмы, документальное кино и арт-хаус.</p>
+                    
+                    <div class="event-details">
+                        <div class="detail-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">22-25 октября, 20:00</div>
+                                <div class="detail-subtitle">4 вечера подряд</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">Крыша "Дома кино"</div>
+                                <div class="detail-subtitle">пл. Киношная, 5</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-stats">
+                            <div class="stat views">
+                                <i class="far fa-eye"></i>
+                                <span>1,532</span>
+                            </div>
+                            <div class="stat likes">
+                                <i class="far fa-heart"></i>
+                                <span>598</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn share-btn" title="Поделиться">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn save-btn" title="Сохранить">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="toggle-comments-btn" data-target="comments-3">
+                    <span>Показать комментарии</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <section class="comments-section" id="comments-3">
+                    <h3 class="section-title">
+                        <i class="far fa-comments"></i>
+                        <span>Комментарии</span>
+                    </h3>
+                    
+                    <div class="comments-container">
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Екатерина Волкова</div>
+                                    <div class="comment-time">Сегодня</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Уже купила билеты на все дни! Очень люблю атмосферу открытых кинотеатров.</p>
+                        </div>
+                        
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Дмитрий Орлов</div>
+                                    <div class="comment-time">2 дня назад</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Был в прошлом году - очень круто! Советую взять с собой плед, вечерами бывает прохладно.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="register-button" data-event-id="3">
+                        Записаться на мероприятие
+                    </button>
+                </section>
+            </article>
+            
+            <!-- Карточка 4: Фуд-фестиваль -->
+            <article class="event-card" data-card-id="4">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Фуд-фестиваль">
+                </div>
+                
+                <div class="card-content">
+                    <h2 class="event-title">Гастрономический фестиваль "Вкус осени"</h2>
+                    
+                    <p class="event-description">Фестиваль местной кухни и сезонных продуктов. Дегустации, мастер-классы от шеф-поваров и фермерский рынок.</p>
+                    
+                    <div class="event-details">
+                        <div class="detail-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">28-29 октября, 12:00-20:00</div>
+                                <div class="detail-subtitle">2 дня вкусных открытий</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="detail-text">
+                                <div class="detail-title">Центральный парк</div>
+                                <div class="detail-subtitle">Главная аллея</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-stats">
+                            <div class="stat views">
+                                <i class="far fa-eye"></i>
+                                <span>2,145</span>
+                            </div>
+                            <div class="stat likes">
+                                <i class="far fa-heart"></i>
+                                <span>874</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn share-btn" title="Поделиться">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="action-btn save-btn" title="Сохранить">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="toggle-comments-btn" data-target="comments-4">
+                    <span>Показать комментарии</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <section class="comments-section" id="comments-4">
+                    <h3 class="section-title">
+                        <i class="far fa-comments"></i>
+                        <span>Комментарии</span>
+                    </h3>
+                    
+                    <div class="comments-container">
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Анна Ковалева</div>
+                                    <div class="comment-time">Вчера</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Обожаю такие фестивали! Всегда нахожу что-то новое и интересное для домашней кухни.</p>
+                        </div>
+                        
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Аватар">
+                                </div>
+                                <div class="comment-user-info">
+                                    <div class="comment-user-name">Максим Соколов</div>
+                                    <div class="comment-time">3 дня назад</div>
+                                </div>
+                            </div>
+                            <p class="comment-text">Буду с семьей! Детям обещают отдельную зону с мастер-классами по украшению пряников.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="register-button" data-event-id="4">
+                        Записаться на мероприятие
+                    </button>
+                </section>
+            </article>
+        </div>
+        
+        <div class="loading" id="loadingIndicator">
+            <i class="fas fa-spinner fa-spin"></i> Загрузка...
+        </div>
+    </main>
+    
+    <script>
+        // Обработчик для кнопок раскрытия комментариев
+        document.querySelectorAll('.toggle-comments-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const commentsSection = document.getElementById(targetId);
+                const isExpanded = commentsSection.classList.contains('expanded');
+                
+                // Закрываем все остальные секции комментариев
+                document.querySelectorAll('.comments-section.expanded').forEach(section => {
+                    if (section.id !== targetId) {
+                        section.classList.remove('expanded');
+                        const btn = document.querySelector(`[data-target="${section.id}"]`);
+                        btn.classList.remove('active');
+                        btn.innerHTML = '<span>Показать комментарии</span><i class="fas fa-chevron-down"></i>';
+                    }
+                });
+                
+                // Переключаем текущую секцию
+                if (isExpanded) {
+                    commentsSection.classList.remove('expanded');
+                    this.classList.remove('active');
+                    this.innerHTML = '<span>Показать комментарии</span><i class="fas fa-chevron-down"></i>';
+                } else {
+                    commentsSection.classList.add('expanded');
+                    this.classList.add('active');
+                    this.innerHTML = '<span>Скрыть комментарии</span><i class="fas fa-chevron-down"></i>';
+                }
+            });
+        });
+        
+        // Обработчик для кнопок лайков
+        document.querySelectorAll('.likes').forEach(likeElement => {
+            likeElement.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                const countElement = this.querySelector('span');
+                const currentCount = parseInt(countElement.textContent);
+                const cardId = this.closest('.event-card').getAttribute('data-card-id');
+                const storageKey = `event_${cardId}_liked`;
+                
+                if (localStorage.getItem(storageKey) === 'true') {
+                    // Убираем лайк
+                    countElement.textContent = currentCount - 1;
+                    icon.className = 'far fa-heart';
+                    localStorage.removeItem(storageKey);
+                    this.style.color = '#d32f2f';
+                } else {
+                    // Ставим лайк
+                    countElement.textContent = currentCount + 1;
+                    icon.className = 'fas fa-heart';
+                    localStorage.setItem(storageKey, 'true');
+                    this.style.color = '#d32f2f';
+                    
+                    // Анимация
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            });
+        });
+        
+        // Обработчик для кнопок регистрации
+        document.querySelectorAll('.register-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                const buttonText = this.textContent;
+                const storageKey = `event_${eventId}_registered`;
+                
+                if (localStorage.getItem(storageKey) === 'true') {
+                    // Отмена регистрации
+                    this.textContent = 'Записаться на мероприятие';
+                    this.classList.remove('registered');
+                    localStorage.removeItem(storageKey);
+                    
+                    // Анимация
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                } else {
+                    // Регистрация
+                    this.innerHTML = '<i class="fas fa-check"></i> Вы записаны!';
+                    this.classList.add('registered');
+                    localStorage.setItem(storageKey, 'true');
+                    
+                    // Анимация
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                }
+            });
+        });
+        
+        // Обработчик для кнопок "Сохранить"
+        document.querySelectorAll('.save-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                const cardId = this.closest('.event-card').getAttribute('data-card-id');
+                const storageKey = `event_${cardId}_saved`;
+                
+                if (localStorage.getItem(storageKey) === 'true') {
+                    // Убираем из сохраненных
+                    icon.className = 'far fa-bookmark';
+                    localStorage.removeItem(storageKey);
+                    this.title = 'Сохранить';
+                } else {
+                    // Добавляем в сохраненные
+                    icon.className = 'fas fa-bookmark';
+                    localStorage.setItem(storageKey, 'true');
+                    this.title = 'Удалить из сохраненных';
+                    
+                    // Анимация
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 300);
+                }
+            });
+        });
+        
+        // Обработчик для кнопок "Поделиться"
+        document.querySelectorAll('.share-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // В реальном приложении здесь была бы логика нативной шары
+                alert('Функция "Поделиться" в разработке');
+                
+                // Анимация
+                this.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 300);
+            });
+        });
+        
+        // Восстанавливаем состояние из localStorage при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Восстанавливаем лайки
+            document.querySelectorAll('.event-card').forEach(card => {
+                const cardId = card.getAttribute('data-card-id');
+                const likeElement = card.querySelector('.likes');
+                
+                if (localStorage.getItem(`event_${cardId}_liked`) === 'true') {
+                    const icon = likeElement.querySelector('i');
+                    const countElement = likeElement.querySelector('span');
+                    const currentCount = parseInt(countElement.textContent);
+                    
+                    countElement.textContent = currentCount + 1;
+                    icon.className = 'fas fa-heart';
+                }
+                
+                // Восстанавливаем сохраненные
+                const saveBtn = card.querySelector('.save-btn');
+                if (localStorage.getItem(`event_${cardId}_saved`) === 'true') {
+                    saveBtn.querySelector('i').className = 'fas fa-bookmark';
+                    saveBtn.title = 'Удалить из сохраненных';
+                }
+                
+                // Восстанавливаем регистрации
+                const registerBtn = card.querySelector('.register-button');
+                if (localStorage.getItem(`event_${cardId}_registered`) === 'true') {
+                    registerBtn.innerHTML = '<i class="fas fa-check"></i> Вы записаны!';
+                    registerBtn.classList.add('registered');
+                }
+            });
+            
+            // Имитация загрузки дополнительных карточек
+            window.addEventListener('scroll', function() {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                    const loadingIndicator = document.getElementById('loadingIndicator');
+                    loadingIndicator.classList.add('active');
+                    
+                    // Имитируем загрузку
+                    setTimeout(() => {
+                        loadingIndicator.classList.remove('active');
+                    }, 1500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
