@@ -79,15 +79,16 @@
             background-color: white;
             border-radius: 16px;
             overflow: hidden;
-            border: none;
+            border: 1.5px solid #bbb; /* Более жирная и темная рамка */
             margin-bottom: 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
         }
         
         .event-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            border-color: #999; /* Темнее при наведении */
         }
         
         .card-image-container {
@@ -135,6 +136,7 @@
             padding: 16px;
             background-color: #f8f9fa;
             border-radius: 10px;
+            border: 1px solid #ddd; /* Добавляем рамку */
         }
         
         .detail-item {
@@ -170,7 +172,7 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 16px;
-            border-top: 1px solid #eee;
+            border-top: 1.5px solid #ddd; /* Более жирная граница */
         }
         
         .card-stats {
@@ -230,10 +232,10 @@
             padding: 12px;
             background-color: #f8f9fa;
             border: none;
+            border-top: 1.5px solid #ddd; /* Более жирная граница */
             color: #666;
             font-size: 14.5px;
             cursor: pointer;
-            border-top: 1px solid #eee;
             transition: background-color 0.2s;
         }
         
@@ -256,7 +258,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease, padding 0.4s ease;
-            border-top: 1px solid #eee;
+            border-top: 1.5px solid #ddd; /* Более жирная граница */
         }
         
         .comments-section.expanded {
@@ -289,7 +291,7 @@
             padding: 12px;
             background-color: #f8f9fa;
             border-radius: 12px;
-            border: 1px solid #eee;
+            border: 1.5px solid #ddd; /* Более жирная рамка */
         }
         
         .comment-header {
@@ -345,6 +347,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
             margin-top: 16px;
+            border: 1.5px solid #166fe5; /* Добавляем рамку */
         }
         
         .register-button:hover {
@@ -353,6 +356,7 @@
         
         .register-button.registered {
             background-color: #2e7d32;
+            border-color: #1b5e20;
         }
         
         /* Адаптивность для мобильных устройств */
@@ -642,7 +646,7 @@
             <!-- Карточка 3: Кинофестиваль под открытым небом -->
             <article class="event-card" data-card-id="3">
                 <div class="card-image-container">
-                    <img src="https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Кинофестиваль под открытым небом">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Кинофестиваль под открытым небом">
                 </div>
                 
                 <div class="card-content">
@@ -739,7 +743,7 @@
             <!-- Карточка 4: Фуд-фестиваль -->
             <article class="event-card" data-card-id="4">
                 <div class="card-image-container">
-                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Фуд-фестиваль">
+                    <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" class="card-image" alt="Фуд-фестиваль">
                 </div>
                 
                 <div class="card-content">
