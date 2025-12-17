@@ -1,0 +1,15 @@
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/bin/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/bin/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.deps.json
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/bin/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.runtimeconfig.json
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/bin/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.dll
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/bin/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.pdb
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.AssemblyInfoInputs.cache
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.AssemblyInfo.cs
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.csproj.CoreCompileInputs.cache
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.sourcelink.json
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.dll
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/refint/Консольное приложение для анализа и оптимизации расходов.dll
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.pdb
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/Консольное приложение для анализа и оптимизации расходов.genruntimeconfig.cache
+/Users/ilyasaltanov/projects/VibeCoding/Консольное приложение для анализа и оптимизации расходов/obj/Debug/net10.0/ref/Консольное приложение для анализа и оптимизации расходов.dll
