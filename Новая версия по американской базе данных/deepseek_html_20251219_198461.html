@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ выручки по городам</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .controls-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        input, select, button {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            flex: 0 0 auto;
+            height: 46px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            display: block;
+        }
+
+        .file-input-trigger {
+            display: block;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .file-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1100px) {
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .table-container, .stats-container, .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container {
+            grid-column: span 1;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .chart-container {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 1100px) {
+            .chart-container {
+                grid-column: span 1;
+            }
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stats-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        .comparison-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .comparison-controls .control-group {
+            flex: 1;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            background-color: #fdf2f2;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .data-note {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Анализ выручки по городам</h1>
+            <p class="description">
+                Загрузите CSV-файл с данными о заказах, выберите год для анализа и два города для сравнения.
+                Программа построит таблицу с выручкой по городам, статистику и диаграммы.
+            </p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <label for="csvFile">Выберите CSV-файл:</label>
+                <div class="file-input-wrapper">
+                    <div class="file-input-trigger">Выберите файл</div>
+                    <input type="file" id="csvFile" accept=".csv">
+                </div>
+                <div class="file-name" id="fileName">orders_customers.csv</div>
+            </div>
+            
+            <div class="control-group">
+                <label for="yearSelect">Выберите год:</label>
+                <select id="yearSelect">
+                    <option value="2017" selected>2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                </select>
+            </div>
+            
+            <div class="comparison-controls">
+                <div class="control-group">
+                    <label for="city1">Первый город для сравнения:</label>
+                    <input type="text" id="city1" placeholder="Например: New York City" value="New York City">
+                </div>
+                
+                <div class="control-group">
+                    <label for="city2">Второй город для сравнения:</label>
+                    <input type="text" id="city2" placeholder="Например: Los Angeles" value="Los Angeles">
+                </div>
+            </div>
+            
+            <button id="analyzeBtn">Анализировать данные</button>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="results-section">
+            <div class="table-container">
+                <h2>Анализ выручки по городам (топ 10)</h2>
+                <div id="tablePlaceholder">
+                    <p>Загрузите CSV-файл и нажмите "Анализировать данные" для отображения таблицы</p>
+                </div>
+                <table id="revenueTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Город</th>
+                            <th>Штат</th>
+                            <th>Выручка ($)</th>
+                            <th>Доля (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Данные будут вставлены с помощью JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="stats-container">
+                <h2>Статистика</h2>
+                <div id="statsPlaceholder">
+                    <p>Загрузите CSV-файл и нажмите "Анализировать данные" для отображения статистики</p>
+                </div>
+                <div id="statsContent" style="display: none;">
+                    <div class="stats-item">
+                        <span>Общая выручка за <span id="currentYear">2017</span> год:</span>
+                        <span class="stats-value" id="totalYearRevenue">$0.00</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>Общая выручка за все года:</span>
+                        <span class="stats-value" id="totalAllRevenue">$0.00</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>Процент выручки за <span id="currentYear2">2017</span> год от общей:</span>
+                        <span class="stats-value" id="yearPercentage">0%</span>
+                    </div>
+                </div>
+                <p class="data-note">*Данные на основе загруженного CSV-файла</p>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <div class="chart-container">
+                <h2>Доля выручки по городам за <span id="pieChartYear">2017</span> год</h2>
+                <div class="chart-wrapper">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h2>Сравнение выручки городов по годам</h2>
+                <div class="chart-wrapper">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Задание 1.3: Обработка данных CSV файла, визуализация результатов. Вариант 1</p>
+            <p>Используемые технологии: HTML, CSS, JavaScript, Chart.js</p>
+        </footer>
+    </div>
+
+    <script>
+        // Глобальные переменные для хранения данных и диаграмм
+        let rawData = [];
+        let processedData = {};
+        let pieChartInstance = null;
+        let barChartInstance = null;
+        
+        // Элементы DOM
+        const csvFileInput = document.getElementById('csvFile');
+        const yearSelect = document.getElementById('yearSelect');
+        const city1Input = document.getElementById('city1');
+        const city2Input = document.getElementById('city2');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const tableBody = document.getElementById('tableBody');
+        const revenueTable = document.getElementById('revenueTable');
+        const tablePlaceholder = document.getElementById('tablePlaceholder');
+        const statsContent = document.getElementById('statsContent');
+        const statsPlaceholder = document.getElementById('statsPlaceholder');
+        const totalYearRevenue = document.getElementById('totalYearRevenue');
+        const totalAllRevenue = document.getElementById('totalAllRevenue');
+        const yearPercentage = document.getElementById('yearPercentage');
+        const currentYearElements = document.querySelectorAll('#currentYear, #currentYear2, #pieChartYear');
+        const fileNameDisplay = document.getElementById('fileName');
+        
+        // Цвета для диаграмм
+        const chartColors = [
+            '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+            '#1abc9c', '#d35400', '#34495e', '#7f8c8d', '#27ae60',
+            '#8e44ad', '#c0392b', '#f1c40f', '#16a085', '#2980b9'
+        ];
+        
+        // Данные по умолчанию (как в задании)
+        const defaultData = `city,state,year,revenue
+New York City,New York,2014,41743.03
+Los Angeles,California,2014,33676.75
+New York City,New York,2015,28270.82
+Los Angeles,California,2015,53694.05
+New York City,New York,2016,33611.08
+Los Angeles,California,2016,46212.15
+New York City,New York,2017,84795.89
+Los Angeles,California,2017,46212.15
+Houston,Texas,2017,35002.77
+Seattle,Washington,2017,33873.44
+Philadelphia,Pennsylvania,2017,32665.92
+San Francisco,California,2017,32237.13
+Chicago,Illinois,2017,16776.11
+Dallas,Texas,2017,14404.33
+Auburn,New York,2017,14378.19
+San Diego,California,2017,13885.11
+Boston,Massachusetts,2016,22500.00
+Phoenix,Arizona,2015,18900.00
+Denver,Colorado,2014,15700.00
+Atlanta,Georgia,2015,21000.00
+Miami,Florida,2016,19500.00
+Detroit,Michigan,2017,12500.00`;
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка загрузки файла
+            csvFileInput.addEventListener('change', handleFileUpload);
+            
+            // Обработка кнопки анализа
+            analyzeBtn.addEventListener('click', analyzeData);
+            
+            // Загрузка данных по умолчанию
+            loadDefaultData();
+            
+            // Обновление имени файла при выборе
+            csvFileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    fileNameDisplay.textContent = this.files[0].name;
+                } else {
+                    fileNameDisplay.textContent = 'orders_customers.csv';
+                }
+            });
+        });
+        
+        // Загрузка данных по умолчанию
+        function loadDefaultData() {
+            rawData = parseCSV(defaultData);
+            processedData = processData(rawData);
+            updateYearSelect();
+        }
+        
+        // Обработка загрузки файла
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const csvContent = e.target.result;
+                    rawData = parseCSV(csvContent);
+                    processedData = processData(rawData);
+                    updateYearSelect();
+                    showError('');
+                } catch (error) {
+                    showError('Ошибка при чтении файла: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                showError('Ошибка при чтении файла');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Парсинг CSV
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const values = line.split(',');
+                const entry = {};
+                
+                for (let j = 0; j < headers.length; j++) {
+                    let value = values[j] ? values[j].trim() : '';
+                    
+                    // Преобразование числовых значений
+                    if (headers[j] === 'year') {
+                        value = parseInt(value);
+                    } else if (headers[j] === 'revenue') {
+                        value = parseFloat(value);
+                    }
+                    
+                    entry[headers[j]] = value;
+                }
+                
+                // Проверка наличия всех необходимых полей
+                if (entry.city && entry.state && entry.year && !isNaN(entry.revenue)) {
+                    data.push(entry);
+                }
+            }
+            
+            return data;
+        }
+        
+        // Обработка и структурирование данных
+        function processData(data) {
+            const result = {
+                byYear: {},
+                cities: new Set(),
+                years: new Set(),
+                totalAllRevenue: 0
+            };
+            
+            // Группировка данных по годам и городам
+            data.forEach(entry => {
+                const year = entry.year;
+                const cityKey = `${entry.city} (${entry.state})`;
+                const revenue = entry.revenue;
+                
+                // Добавление года в множество
+                result.years.add(year);
+                
+                // Добавление города в множество
+                result.cities.add(cityKey);
+                
+                // Инициализация записи для года, если её нет
+                if (!result.byYear[year]) {
+                    result.byYear[year] = {
+                        cities: {},
+                        totalRevenue: 0
+                    };
+                }
+                
+                // Инициализация записи для города в году, если её нет
+                if (!result.byYear[year].cities[cityKey]) {
+                    result.byYear[year].cities[cityKey] = 0;
+                }
+                
+                // Добавление выручки
+                result.byYear[year].cities[cityKey] += revenue;
+                result.byYear[year].totalRevenue += revenue;
+                result.totalAllRevenue += revenue;
+            });
+            
+            return result;
+        }
+        
+        // Обновление выпадающего списка годов
+        function updateYearSelect() {
+            const yearSelect = document.getElementById('yearSelect');
+            const years = Array.from(processedData.years).sort();
+            
+            // Очистка текущих опций (кроме первой placeholder)
+            yearSelect.innerHTML = '';
+            
+            // Добавление доступных годов
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            });
+            
+            // Установка последнего года по умолчанию
+            if (years.length > 0) {
+                yearSelect.value = Math.max(...years);
+            }
+        }
+        
+        // Основная функция анализа данных
+        function analyzeData() {
+            try {
+                const selectedYear = parseInt(yearSelect.value);
+                const city1 = city1Input.value.trim();
+                const city2 = city2Input.value.trim();
+                
+                // Проверка ввода
+                if (!processedData.years || processedData.years.size === 0) {
+                    showError('Нет данных для анализа. Загрузите CSV-файл.');
+                    return;
+                }
+                
+                if (!city1 || !city2) {
+                    showError('Пожалуйста, введите названия обоих городов для сравнения.');
+                    return;
+                }
+                
+                // Обновление отображения года
+                currentYearElements.forEach(el => {
+                    el.textContent = selectedYear;
+                });
+                
+                // Обновление таблицы
+                updateTable(selectedYear);
+                
+                // Обновление статистики
+                updateStatistics(selectedYear);
+                
+                // Обновление круговой диаграммы
+                updatePieChart(selectedYear);
+                
+                // Обновление столбчатой диаграммы
+                updateBarChart(city1, city2);
+                
+                showError('');
+            } catch (error) {
+                showError('Ошибка при анализе данных: ' + error.message);
+            }
+        }
+        
+        // Обновление таблицы
+        function updateTable(year) {
+            const yearData = processedData.byYear[year];
+            
+            if (!yearData) {
+                tablePlaceholder.innerHTML = '<p>Нет данных для выбранного года</p>';
+                revenueTable.style.display = 'none';
+                tablePlaceholder.style.display = 'block';
+                return;
+            }
+            
+            // Получение данных по городам за выбранный год
+            const cityRevenues = Object.entries(yearData.cities)
+                .map(([city, revenue]) => ({
+                    city,
+                    revenue,
+                    percentage: (revenue / yearData.totalRevenue) * 100
+                }))
+                .sort((a, b) => b.revenue - a.revenue);
+            
+            // Ограничение топ-10
+            const top10 = cityRevenues.slice(0, 10);
+            const others = cityRevenues.slice(10);
+            
+            // Расчет суммы для "Остальных"
+            const othersTotal = others.reduce((sum, item) => sum + item.revenue, 0);
+            const othersPercentage = (othersTotal / yearData.totalRevenue) * 100;
+            
+            // Очистка таблицы
+            tableBody.innerHTML = '';
+            
+            // Заполнение таблицы топ-10
+            top10.forEach((item, index) => {
+                const row = document.createElement('tr');
+                
+                // Разделение города и штата
+                const cityParts = item.city.split(' (');
+                const cityName = cityParts[0];
+                const stateName = cityParts[1] ? cityParts[1].replace(')', '') : '';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${cityName}</td>
+                    <td>${stateName}</td>
+                    <td>$${item.revenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${item.percentage.toFixed(2)}%</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Добавление строки "Остальные", если есть
+            if (othersTotal > 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>...</td>
+                    <td colspan="2">Другие города</td>
+                    <td>$${othersTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${othersPercentage.toFixed(2)}%</td>
+                `;
+                row.style.fontStyle = 'italic';
+                row.style.color = '#7f8c8d';
+                tableBody.appendChild(row);
+            }
+            
+            // Показ таблицы
+            revenueTable.style.display = 'table';
+            tablePlaceholder.style.display = 'none';
+        }
+        
+        // Обновление статистики
+        function updateStatistics(year) {
+            const yearData = processedData.byYear[year];
+            
+            if (!yearData) {
+                statsContent.style.display = 'none';
+                statsPlaceholder.style.display = 'block';
+                statsPlaceholder.innerHTML = '<p>Нет данных для выбранного года</p>';
+                return;
+            }
+            
+            const yearRevenue = yearData.totalRevenue;
+            const allRevenue = processedData.totalAllRevenue;
+            const percentage = (yearRevenue / allRevenue) * 100;
+            
+            // Обновление значений
+            totalYearRevenue.textContent = `$${yearRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            totalAllRevenue.textContent = `$${allRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            yearPercentage.textContent = `${percentage.toFixed(2)}%`;
+            
+            // Показ статистики
+            statsContent.style.display = 'block';
+            statsPlaceholder.style.display = 'none';
+        }
+        
+        // Обновление круговой диаграммы
+        function updatePieChart(year) {
+            const yearData = processedData.byYear[year];
+            
+            if (!yearData) {
+                // Очистка диаграммы, если нет данных
+                if (pieChartInstance) {
+                    pieChartInstance.destroy();
+                    pieChartInstance = null;
+                }
+                return;
+            }
+            
+            // Получение данных по городам за выбранный год
+            const cityRevenues = Object.entries(yearData.cities)
+                .map(([city, revenue]) => ({
+                    city,
+                    revenue,
+                    percentage: (revenue / yearData.totalRevenue) * 100
+                }))
+                .sort((a, b) => b.revenue - a.revenue);
+            
+            // Ограничение топ-10
+            const top10 = cityRevenues.slice(0, 10);
+            const others = cityRevenues.slice(10);
+            
+            // Расчет суммы для "Остальных"
+            const othersTotal = others.reduce((sum, item) => sum + item.revenue, 0);
+            
+            // Подготовка данных для диаграммы
+            const labels = top10.map(item => item.city);
+            const data = top10.map(item => item.revenue);
+            const backgroundColors = top10.map((_, index) => chartColors[index % chartColors.length]);
+            
+            // Добавление "Остальных", если есть
+            if (othersTotal > 0) {
+                labels.push('Другие города');
+                data.push(othersTotal);
+                backgroundColors.push('#95a5a6');
+            }
+            
+            // Получение контекста canvas
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            
+            // Уничтожение предыдущей диаграммы, если существует
+            if (pieChartInstance) {
+                pieChartInstance.destroy();
+            }
+            
+            // Создание новой диаграммы
+            pieChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: $${value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Обновление столбчатой диаграммы
+        function updateBarChart(city1, city2) {
+            // Поиск полных названий городов с учетом штата
+            const findCityKey = (cityName) => {
+                return Array.from(processedData.cities).find(cityKey => 
+                    cityKey.toLowerCase().includes(cityName.toLowerCase())
+                );
+            };
+            
+            const city1Key = findCityKey(city1);
+            const city2Key = findCityKey(city2);
+            
+            if (!city1Key || !city2Key) {
+                showError(`Город не найден в данных. Доступные города: ${Array.from(processedData.cities).slice(0, 5).join(', ')}...`);
+                
+                // Очистка диаграммы
+                if (barChartInstance) {
+                    barChartInstance.destroy();
+                    barChartInstance = null;
+                }
+                return;
+            }
+            
+            // Получение списка годов
+            const years = Array.from(processedData.years).sort();
+            
+            // Подготовка данных для диаграммы
+            const city1Data = years.map(year => {
+                const yearData = processedData.byYear[year];
+                return yearData && yearData.cities[city1Key] ? yearData.cities[city1Key] : 0;
+            });
+            
+            const city2Data = years.map(year => {
+                const yearData = processedData.byYear[year];
+                return yearData && yearData.cities[city2Key] ? yearData.cities[city2Key] : 0;
+            });
+            
+            // Получение контекста canvas
+            const ctx = document.getElementById('barChart').getContext('2d');
+            
+            // Уничтожение предыдущей диаграммы, если существует
+            if (barChartInstance) {
+                barChartInstance.destroy();
+            }
+            
+            // Создание новой диаграммы
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: city1Key,
+                            data: city1Data,
+                            backgroundColor: chartColors[0],
+                            borderColor: chartColors[0],
+                            borderWidth: 1
+                        },
+                        {
+                            label: city2Key,
+                            data: city2Data,
+                            backgroundColor: chartColors[1],
+                            borderColor: chartColors[1],
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: $${value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Выручка ($)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Год'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Показать сообщение об ошибке
+        function showError(message) {
+            if (message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
