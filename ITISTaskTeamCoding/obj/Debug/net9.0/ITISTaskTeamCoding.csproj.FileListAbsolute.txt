@@ -1,0 +1,15 @@
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/bin/Debug/net9.0/ITISTaskTeamCoding
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/bin/Debug/net9.0/ITISTaskTeamCoding.deps.json
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/bin/Debug/net9.0/ITISTaskTeamCoding.runtimeconfig.json
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/bin/Debug/net9.0/ITISTaskTeamCoding.dll
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/bin/Debug/net9.0/ITISTaskTeamCoding.pdb
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.AssemblyInfoInputs.cache
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.AssemblyInfo.cs
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.csproj.CoreCompileInputs.cache
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.sourcelink.json
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.dll
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/refint/ITISTaskTeamCoding.dll
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.pdb
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ITISTaskTeamCoding.genruntimeconfig.cache
+/Users/ilyasaltanov/projects/VibeCoding/ITISTaskTeamCoding/obj/Debug/net9.0/ref/ITISTaskTeamCoding.dll
