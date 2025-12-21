@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица привычек - Трекер привычек</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .date-input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .habit-name-cell {
+            min-width: 200px;
+            position: sticky;
+            left: 0;
+            background-color: white;
+            z-index: 5;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+
+        .date-header {
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .date-cell {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .completed-cell {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .not-completed-cell {
+            color: #e74c3c;
+        }
+
+        .habit-category {
+            padding: 4px 10px;
+            background-color: #e9ecef;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .habit-period {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+
+        .daily-badge {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .weekly-badge {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .monthly-badge {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .checkbox-container {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 11px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2575fc;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2575fc;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .current-period {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .date-range, .filter-section {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .back-btn {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-top: 15px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="deepseek_html_20251221_6067a6.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Назад к трекеру
+            </a>
+            <h1><i class="fas fa-table"></i> Таблица привычек</h1>
+            <p class="subtitle">Просмотр выполнения привычек по дням в табличном формате</p>
+        </header>
+
+        <div class="controls">
+            <div class="date-range">
+                <label for="start-date">Начальная дата:</label>
+                <input type="date" id="start-date" class="date-input">
+                <label for="end-date">Конечная дата:</label>
+                <input type="date" id="end-date" class="date-input">
+                <button id="update-table" class="btn">Обновить таблицу</button>
+            </div>
+            
+            <div class="filter-section">
+                <select id="period-filter">
+                    <option value="all">Все периоды</option>
+                    <option value="daily">Ежедневные</option>
+                    <option value="weekly">Еженедельные</option>
+                    <option value="monthly">Ежемесячные</option>
+                </select>
+                
+                <select id="category-filter">
+                    <option value="all">Все категории</option>
+                    <option value="Здоровье">Здоровье</option>
+                    <option value="Работа">Работа</option>
+                    <option value="Обучение">Обучение</option>
+                    <option value="Финансы">Финансы</option>
+                    <option value="Отношения">Отношения</option>
+                    <option value="Развлечения">Развлечения</option>
+                    <option value="Другое">Другое</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="total-habits">0</div>
+                <div class="stat-label">Всего привычек</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="completion-rate">0%</div>
+                <div class="stat-label">Общая успешность</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="days-count">0</div>
+                <div class="stat-label">Дней в таблице</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="current-period" id="current-period"></div>
+            <table id="habits-table">
+                <thead>
+                    <tr>
+                        <th class="habit-name-cell">Привычка</th>
+                        <!-- Даты будут добавлены через JavaScript -->
+                    </tr>
+                </thead>
+                <tbody id="habits-table-body">
+                    <!-- Данные будут добавлены через JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем привычки из localStorage
+            let habits = JSON.parse(localStorage.getItem('habits')) || [];
+            
+            // Настройки по умолчанию
+            let startDate = new Date();
+            let endDate = new Date();
+            let periodFilter = 'all';
+            let categoryFilter = 'all';
+            
+            // Инициализация
+            initTable();
+            
+            function initTable() {
+                // Устанавливаем даты по умолчанию (последние 7 дней)
+                endDate = new Date();
+                startDate = new Date();
+                startDate.setDate(startDate.getDate() - 7);
+                
+                // Устанавливаем значения в полях ввода
+                document.getElementById('start-date').value = formatDateForInput(startDate);
+                document.getElementById('end-date').value = formatDateForInput(endDate);
+                
+                // Загружаем таблицу
+                loadTable();
+                
+                // Устанавливаем обработчики событий
+                setupEventListeners();
+            }
+            
+            function loadTable() {
+                // Фильтрация привычек
+                let filteredHabits = habits.filter(habit => {
+                    const periodMatch = periodFilter === 'all' || habit.period === periodFilter;
+                    const categoryMatch = categoryFilter === 'all' || habit.category === categoryFilter;
+                    return periodMatch && categoryMatch;
+                });
+                
+                // Обновляем статистику
+                updateStats(filteredHabits);
+                
+                // Обновляем заголовок периода
+                updatePeriodHeader();
+                
+                // Генерируем таблицу
+                generateTable(filteredHabits);
+            }
+            
+            function generateTable(filteredHabits) {
+                const tableBody = document.getElementById('habits-table-body');
+                const tableHead = document.querySelector('#habits-table thead tr');
+                
+                // Очищаем таблицу
+                tableBody.innerHTML = '';
+                
+                // Генерируем заголовки с датами
+                const dateHeaders = generateDateHeaders();
+                tableHead.innerHTML = '<th class="habit-name-cell">Привычка</th>' + dateHeaders;
+                
+                // Генерируем строки для каждой привычки
+                if (filteredHabits.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="${dateHeaders.split('</th>').length + 1}" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-clipboard-list" style="font-size: 3rem; color: #ddd; margin-bottom: 15px; display: block;"></i>
+                                <h3>Нет привычек для отображения</h3>
+                                <p>Измените фильтры или добавьте привычки в основном трекере</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Для каждой привычки создаем строку
+                filteredHabits.forEach(habit => {
+                    const row = document.createElement('tr');
+                    
+                    // Ячейка с названием привычки и метаданными
+                    const nameCell = document.createElement('td');
+                    nameCell.className = 'habit-name-cell';
+                    
+                    let periodBadgeClass = '';
+                    if (habit.period === 'daily') {
+                        periodBadgeClass = 'daily-badge';
+                    } else if (habit.period === 'weekly') {
+                        periodBadgeClass = 'weekly-badge';
+                    } else {
+                        periodBadgeClass = 'monthly-badge';
+                    }
+                    
+                    nameCell.innerHTML = `
+                        <div><strong>${habit.name}</strong></div>
+                        <div>
+                            <span class="habit-category">${habit.category}</span>
+                            <span class="habit-period ${periodBadgeClass}">${getPeriodText(habit.period)}</span>
+                        </div>
+                    `;
+                    
+                    row.appendChild(nameCell);
+                    
+                    // Ячейки для каждой даты
+                    const currentDate = new Date(startDate);
+                    while (currentDate <= endDate) {
+                        const dateString = formatDate(currentDate);
+                        const isCompleted = habit.completedDates && habit.completedDates.includes(dateString);
+                        
+                        const dateCell = document.createElement('td');
+                        dateCell.className = 'date-cell';
+                        
+                        if (isCompleted) {
+                            dateCell.innerHTML = `
+                                <div class="completed-cell">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            `;
+                        } else {
+                            dateCell.innerHTML = `
+                                <div class="not-completed-cell">
+                                    <i class="far fa-circle"></i>
+                                </div>
+                            `;
+                        }
+                        
+                        row.appendChild(dateCell);
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            function generateDateHeaders() {
+                let headersHTML = '';
+                const currentDate = new Date(startDate);
+                
+                while (currentDate <= endDate) {
+                    const dateString = formatDate(currentDate);
+                    const isToday = dateString === formatDate(new Date());
+                    
+                    headersHTML += `
+                        <th class="date-header ${isToday ? 'today-header' : ''}">
+                            <div>${formatDateForDisplay(currentDate)}</div>
+                            <div style="font-size: 0.8rem; font-weight: normal;">${getDayOfWeek(currentDate)}</div>
+                        </th>
+                    `;
+                    
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                
+                return headersHTML;
+            }
+            
+            function updateStats(filteredHabits) {
+                document.getElementById('total-habits').textContent = filteredHabits.length;
+                
+                // Рассчитываем общую успешность
+                let totalCompletion = 0;
+                let maxCompletion = 0;
+                
+                filteredHabits.forEach(habit => {
+                    // Для каждой привычки считаем выполнение в выбранном диапазоне дат
+                    const currentDate = new Date(startDate);
+                    let habitCompletion = 0;
+                    let habitMax = 0;
+                    
+                    while (currentDate <= endDate) {
+                        const dateString = formatDate(currentDate);
+                        
+                        // Проверяем, должна ли привычка выполняться в эту дату
+                        const shouldCheck = shouldCheckHabitOnDate(habit, currentDate);
+                        
+                        if (shouldCheck) {
+                            habitMax++;
+                            if (habit.completedDates && habit.completedDates.includes(dateString)) {
+                                habitCompletion++;
+                            }
+                        }
+                        
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                    
+                    totalCompletion += habitCompletion;
+                    maxCompletion += habitMax;
+                });
+                
+                const completionRate = maxCompletion > 0 ? Math.round((totalCompletion / maxCompletion) * 100) : 0;
+                document.getElementById('completion-rate').textContent = `${completionRate}%`;
+                
+                // Считаем количество дней в таблице
+                const daysCount = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                document.getElementById('days-count').textContent = daysCount;
+            }
+            
+            function shouldCheckHabitOnDate(habit, date) {
+                // Проверяем, должна ли привычка выполняться в эту дату
+                if (habit.period === 'daily') {
+                    return true;
+                } else if (habit.period === 'weekly') {
+                    // Например, проверяем каждую неделю в понедельник
+                    // Можно адаптировать под конкретные требования
+                    return date.getDay() === 1; // Понедельник
+                } else if (habit.period === 'monthly') {
+                    // Проверяем в первый день месяца
+                    return date.getDate() === 1;
+                }
+                return true;
+            }
+            
+            function updatePeriodHeader() {
+                const periodElement = document.getElementById('current-period');
+                periodElement.textContent = `Период: ${formatDateForDisplay(startDate)} - ${formatDateForDisplay(endDate)}`;
+            }
+            
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            function formatDateForInput(date) {
+                return formatDate(date);
+            }
+            
+            function formatDateForDisplay(date) {
+                return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            }
+            
+            function getDayOfWeek(date) {
+                const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+                return days[date.getDay()];
+            }
+            
+            function getPeriodText(period) {
+                const texts = {
+                    'daily': 'Ежедневно',
+                    'weekly': 'Еженедельно',
+                    'monthly': 'Ежемесячно'
+                };
+                return texts[period] || period;
+            }
+            
+            function setupEventListeners() {
+                // Обновление таблицы при нажатии кнопки
+                document.getElementById('update-table').addEventListener('click', function() {
+                    const startInput = document.getElementById('start-date').value;
+                    const endInput = document.getElementById('end-date').value;
+                    
+                    if (!startInput || !endInput) {
+                        alert('Пожалуйста, выберите начальную и конечную даты');
+                        return;
+                    }
+                    
+                    startDate = new Date(startInput);
+                    endDate = new Date(endInput);
+                    
+                    if (startDate > endDate) {
+                        alert('Начальная дата не может быть позже конечной');
+                        return;
+                    }
+                    
+                    loadTable();
+                });
+                
+                // Фильтр по периодичности
+                document.getElementById('period-filter').addEventListener('change', function() {
+                    periodFilter = this.value;
+                    loadTable();
+                });
+                
+                // Фильтр по категории
+                document.getElementById('category-filter').addEventListener('change', function() {
+                    categoryFilter = this.value;
+                    loadTable();
+                });
+                
+                // Добавляем примерные привычки, если их нет
+                if (habits.length === 0) {
+                    addExampleHabits();
+                }
+            }
+            
+            function addExampleHabits() {
+                const exampleHabits = [
+                    {
+                        id: 1,
+                        name: "Утренняя зарядка 15 минут",
+                        category: "Здоровье",
+                        period: "daily",
+                        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        completedDates: [
+                            formatDate(new Date()),
+                            formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000)),
+                            formatDate(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000))
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Чтение 30 страниц",
+                        category: "Обучение",
+                        period: "daily",
+                        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                        completedDates: [
+                            formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000)),
+                            formatDate(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000))
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: "Планирование недели",
+                        category: "Работа",
+                        period: "weekly",
+                        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+                        completedDates: [
+                            formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
+                        ]
+                    }
+                ];
+                
+                habits = exampleHabits;
+                localStorage.setItem('habits', JSON.stringify(habits));
+                loadTable();
+            }
+        });
+    </script>
+</body>
+</html>
