@@ -1,0 +1,15 @@
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/bin/Debug/net10.0/Программа для консольных заметок
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/bin/Debug/net10.0/Программа для консольных заметок.deps.json
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/bin/Debug/net10.0/Программа для консольных заметок.runtimeconfig.json
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/bin/Debug/net10.0/Программа для консольных заметок.dll
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/bin/Debug/net10.0/Программа для консольных заметок.pdb
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.AssemblyInfoInputs.cache
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.AssemblyInfo.cs
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.csproj.CoreCompileInputs.cache
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.sourcelink.json
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.dll
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/refint/Программа для консольных заметок.dll
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.pdb
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/Программа для консольных заметок.genruntimeconfig.cache
+/Users/ilyasaltanov/projects/VibeCoding/Программа для консольных заметок/obj/Debug/net10.0/ref/Программа для консольных заметок.dll
